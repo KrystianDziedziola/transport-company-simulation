@@ -1,7 +1,6 @@
 package edu.kystek;
 
 import edu.kystek.controller.AirportViewController;
-import edu.kystek.model.Plane;
 import edu.kystek.view.AirportView;
 
 public class Main {
@@ -13,5 +12,7 @@ public class Main {
 
         airportViewController.addPlane("Plane-1");
         airportViewController.show();
+
+
     }
 }
