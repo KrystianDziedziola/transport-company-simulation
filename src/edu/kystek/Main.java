@@ -1,7 +1,8 @@
-package edu.kystek.pwir;
+package edu.kystek;
 
-import edu.kystek.pwir.controller.AirportViewController;
-import edu.kystek.pwir.view.AirportView;
+import edu.kystek.controller.AirportViewController;
+import edu.kystek.model.Plane;
+import edu.kystek.view.AirportView;
 
 public class Main {
 
@@ -10,6 +11,7 @@ public class Main {
         AirportView airportView = new AirportView();
         AirportViewController airportViewController = new AirportViewController(airportView);
 
+        airportViewController.addPlane("Plane-1");
         airportViewController.show();
     }
 }

@@ -1,4 +1,6 @@
-package edu.kystek.pwir.view;
+package edu.kystek.view;
+
+import edu.kystek.model.Plane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,8 +22,9 @@ public class AirportView extends JFrame {
         setVisible(true);
     }
 
-    public void addPlane() {
-
+    public void addPlane(Plane plane) {
+        JLabel planePictureLabel = plane.getPictureLabel();
+        panel.add(planePictureLabel);
     }
 
     private void setupFrame() {
