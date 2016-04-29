@@ -1,34 +1,20 @@
 package edu.kystek.model;
 
-import javax.imageio.ImageIO;
+import edu.kystek.controller.helper.ImageLabelHelper;
+
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class Plane {
 
     private static final int WIDTH = 100, HEIGHT = 100;
+    private String pictureName = "plane.png";
 
     private String name;
     private JLabel pictureLabel;
 
     public Plane(String name) {
         this.name = name;
-        createPictureLabel();
-    }
-
-    private void createPictureLabel() {
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File pictureFile = new File(classLoader.getResource("plane.png").getFile());
-            BufferedImage image = ImageIO.read(pictureFile);
-            Image scaledImage = image.getScaledInstance(WIDTH, HEIGHT, Image.SCALE_SMOOTH);
-            pictureLabel = new JLabel(new ImageIcon(scaledImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        pictureLabel = new ImageLabelHelper().getLabelWithImage(pictureName, WIDTH, HEIGHT);
     }
 
     public String getName() {
