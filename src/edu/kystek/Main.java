@@ -1,17 +1,20 @@
 package edu.kystek;
 
 import edu.kystek.controller.AirportController;
+import edu.kystek.controller.FlightsGenerator;
 
 public class Main {
 
     public static void main(String[] args) {
+        new Main(args);
 
-        AirportController airportController = new AirportController();
-        airportController.show();
+    }
 
-        airportController.addFlight("Plane-1", 0, 500);
-        airportController.addFlight("Plane-2", 400, 400);
-        airportController.addFlight("Plane-3", 0, 100);
+    private Main(String[] args) {
+        int numberOfPlanes = Integer.parseInt(args[0]);
+
+        new FlightsGenerator(numberOfPlanes).start();
+
     }
 
 }

@@ -11,27 +11,25 @@ import java.util.List;
 
 public class AirportController {
 
-    private static int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
-    private static int BASE_X = 690, BASE_Y = 0;
-    private static int TIME_TO_WAIT_IN_BASE = 1000;
-
-    private Dimension windowSize = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
-    private Point baseLocation = new Point(BASE_X, BASE_Y);
+    static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
+    private static final int BASE_X = 690, BASE_Y = 0;
+    private static final int TIME_TO_WAIT_IN_BASE = 500;
 
     private List<Plane> planes = new ArrayList<>();
 
     private AirportView airportView;
 
-    public AirportController() {
+    AirportController() {
+        Dimension windowSize = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
+        Point baseLocation = new Point(BASE_X, BASE_Y);
         airportView = new AirportView(windowSize, baseLocation);
     }
 
-    public void show() {
+    void showAirport() {
         airportView.showWindow();
     }
 
-    public void addFlight(String planeName, int sourceX, int sourceY) {
-        Point sourceLocation = new Point(sourceX, sourceY);
+    void addFlight(String planeName, Point sourceLocation) {
         new Flight(planeName, sourceLocation).start();
     }
 
