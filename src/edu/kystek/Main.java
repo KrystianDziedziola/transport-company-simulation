@@ -1,15 +1,17 @@
 package edu.kystek;
 
-import edu.kystek.controller.AirportViewController;
+import edu.kystek.controller.AirportController;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        AirportViewController airportViewController = new AirportViewController();
-        airportViewController.show();
+        AirportController airportController = new AirportController();
+        airportController.show();
 
-        airportViewController.addPlane("Plane-1");
-        airportViewController.movePlane("Plane-1", 600, 200);
+        airportController.addFlight("Plane-1", 0, 500);
+        airportController.addFlight("Plane-2", 400, 400);
+        airportController.addFlight("Plane-3", 0, 100);
     }
+
 }

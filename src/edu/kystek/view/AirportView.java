@@ -1,6 +1,5 @@
 package edu.kystek.view;
 
-import edu.kystek.controller.helper.ImageLabelHelper;
 import edu.kystek.controller.helper.Pause;
 import edu.kystek.model.Plane;
 
@@ -9,58 +8,64 @@ import java.awt.*;
 
 public class AirportView extends JFrame {
 
-    private static int WIDTH = 800, HEIGHT = 600;
-    private static int PLANE_X = 20, PLANE_Y = HEIGHT - 130;
+    private Dimension windowSize;
+    private Point baseLocation;
 
-    private Dimension windowDimension = new Dimension(WIDTH, HEIGHT);
-    private Point defaultPlaneLocation = new Point(PLANE_X, PLANE_Y);
-
-    public AirportView() {
+    public AirportView(Dimension windowSize, Point baseLocation) {
+        this.baseLocation = baseLocation;
+        this.windowSize = windowSize;
         setupFrame();
+
     }
 
     public void showWindow() {
         setVisible(true);
     }
 
-    public void addPlane(Plane plane) {
+    public void addPlane(Plane plane, Point location) {
         JLabel planePictureLabel = plane.getPictureLabel();
-        planePictureLabel.setLocation(defaultPlaneLocation);
+        planePictureLabel.setLocation(location);
         add(planePictureLabel);
         refresh();
     }
 
-    public void animateMove(JLabel planeLabel, Point targetLocation) {
+    public void animateMove(JLabel planeLabel) {
         Point currentLocation = planeLabel.getLocation();
-        Steps steps = new Steps(currentLocation, targetLocation);
+        Steps steps = new Steps(currentLocation, baseLocation);
         int stepX = steps.getStepX();
         int stepY = steps.getStepY();
 
-        while (!isTargetReached(currentLocation, targetLocation)) {
+        while (!isTargetReached(currentLocation, baseLocation)) {
             Pause.pause(Steps.TIME_BETWEEN_STEPS);
-            if (currentLocation.getX() < targetLocation.getX()) {
+            if (currentLocation.getX() < baseLocation.getX()) {
                 currentLocation.setLocation(currentLocation.getX() + stepX, currentLocation.getY());
             }
-            if (currentLocation.getY() > targetLocation.getY()) {
+            if (currentLocation.getY() > baseLocation.getY()) {
                 currentLocation.setLocation(currentLocation.getX(), currentLocation.getY() - stepY);
             }
             movePlane(planeLabel, currentLocation);
         }
     }
 
-    public void movePlane(JLabel planeLabel, Point point) {
+    private void movePlane(JLabel planeLabel, Point point) {
         planeLabel.setLocation(point);
         refresh();
     }
 
+    public void removeLabel(JLabel label) {
+        label.setVisible(false);
+        label.setIcon(null);
+        refresh();
+    }
+
     private boolean isTargetReached(Point current, Point target) {
-        return (current.getX() > target.getX()) && (current.getY() < target.getY());
+        return (current.getX() >= target.getX()) && (current.getY() <= target.getY());
     }
 
     private void setupFrame() {
         setTitle("Plane transport simulation - airport");
         setLayout(null);
-        setSize(windowDimension);
+        setSize(windowSize);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -74,8 +79,8 @@ public class AirportView extends JFrame {
     private class Steps {
 
         private Point target, current;
-        private static final int NUMBER_OF_STEPS = 100;
-        private static final int TIME_BETWEEN_STEPS = 100;
+        private static final int NUMBER_OF_STEPS = 30;
+        private static final int TIME_BETWEEN_STEPS = 50;
 
         Steps(Point current, Point target) {
             this.current = current;
