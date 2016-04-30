@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2902e7cb-2043-4549-a487-ff5b148db583" name="Default" comment="Added functions that allow you to create flights that are executed simultaneously">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/edu/kystek/controller/AirportController.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/transport-company-simulation/edu/kystek/controller/AirportViewController.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/edu/kystek/controller/AirportViewController.java" afterPath="" />
+    <list default="true" id="2902e7cb-2043-4549-a487-ff5b148db583" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/transport-company-simulation/edu/kystek/Main.class" afterPath="$PROJECT_DIR$/out/production/transport-company-simulation/edu/kystek/Main.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/transport-company-simulation/edu/kystek/view/AirportView.class" afterPath="$PROJECT_DIR$/out/production/transport-company-simulation/edu/kystek/view/AirportView.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/kystek/Main.java" afterPath="$PROJECT_DIR$/src/edu/kystek/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/kystek/view/AirportView.java" afterPath="$PROJECT_DIR$/src/edu/kystek/view/AirportView.java" />
     </list>
     <ignored path="pwir_zad3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -697,7 +692,7 @@
       <workItem from="1461842354956" duration="943000" />
       <workItem from="1461843455613" duration="5990000" />
       <workItem from="1461931957871" duration="9068000" />
-      <workItem from="1462011254229" duration="4368000" />
+      <workItem from="1462011254229" duration="4375000" />
     </task>
     <task id="LOCAL-00001" summary="Created project structure and basic airport view with controller">
       <created>1461843890147</created>
@@ -734,11 +729,18 @@
       <option name="project" value="LOCAL" />
       <updated>1461944089071</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added functions that allow you to create flights that are executed simultaneously">
+      <created>1462015666931</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1462015666931</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24622000" />
+    <option name="totallyTimeSpent" value="24629000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
