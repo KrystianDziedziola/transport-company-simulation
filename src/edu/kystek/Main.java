@@ -1,6 +1,5 @@
 package edu.kystek;
 
-import edu.kystek.controller.AirportController;
 import edu.kystek.controller.FlightsGenerator;
 
 public class Main {
