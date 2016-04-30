@@ -15,7 +15,6 @@ public class AirportView extends JFrame {
         this.baseLocation = baseLocation;
         this.windowSize = windowSize;
         setupFrame();
-
     }
 
     public void showWindow() {
@@ -23,13 +22,13 @@ public class AirportView extends JFrame {
     }
 
     public void addPlane(Plane plane, Point location) {
-        JLabel planePictureLabel = plane.getPictureLabel();
-        planePictureLabel.setLocation(location);
-        add(planePictureLabel);
+        JComponent planeComponent = plane.get();
+        planeComponent.setLocation(location);
+        add(planeComponent);
         refresh();
     }
 
-    public void animateMove(JLabel planeLabel) {
+    public void animateMove(JComponent planeLabel) {
         Point currentLocation = planeLabel.getLocation();
         Steps steps = new Steps(currentLocation, baseLocation);
         int stepX = steps.getStepX();
@@ -47,14 +46,13 @@ public class AirportView extends JFrame {
         }
     }
 
-    private void movePlane(JLabel planeLabel, Point point) {
+    private void movePlane(JComponent planeLabel, Point point) {
         planeLabel.setLocation(point);
         refresh();
     }
 
-    public void removeLabel(JLabel label) {
+    public void removeLabel(JComponent label) {
         label.setVisible(false);
-        label.setIcon(null);
         refresh();
     }
 
@@ -79,7 +77,6 @@ public class AirportView extends JFrame {
     private class Steps {
 
         private Point target, current;
-        private static final int NUMBER_OF_STEPS = 30;
         private static final int TIME_BETWEEN_STEPS = 50;
 
         Steps(Point current, Point target) {
@@ -87,12 +84,16 @@ public class AirportView extends JFrame {
             this.target = target;
         }
 
+        //FIXME: fix this two functions to get flight in straight line
         int getStepX() {
-            return (int) ((target.getX() - current.getX()) / NUMBER_OF_STEPS);
+//            return (int) ((target.getX() - current.getX()) / NUMBER_OF_STEPS);
+//            return (int) ((target.getX() - current.getX()) / (current.getY() - target.getY()) * 5);
+            return 5;
         }
 
         int getStepY() {
-            return (int) ((current.getY() - target.getY()) / NUMBER_OF_STEPS);
+//            return (int) ((current.getY() - target.getY()) / NUMBER_OF_STEPS);
+            return 5;
         }
 
     }

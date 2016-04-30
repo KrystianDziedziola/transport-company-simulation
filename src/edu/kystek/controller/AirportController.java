@@ -9,10 +9,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AirportController {
+class AirportController {
 
     static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
-    private static final int BASE_X = 690, BASE_Y = 0;
+    private static final int BASE_X = 640, BASE_Y = 0;
     private static final int TIME_TO_WAIT_IN_BASE = 500;
 
     private List<Plane> planes = new ArrayList<>();
@@ -29,26 +29,26 @@ public class AirportController {
         airportView.showWindow();
     }
 
-    void addFlight(String planeName, Point sourceLocation) {
-        new Flight(planeName, sourceLocation).start();
+    void addFlight(String planeName, Point sourceLocation, int fuelTankCapacity) {
+        new Flight(planeName, sourceLocation, fuelTankCapacity).start();
     }
 
-    private void addPlane(String name, Point location) {
-        Plane plane = new Plane(name);
+    private void addPlane(String name, Point location, int fuelTankCapacity) {
+        Plane plane = new Plane(name, fuelTankCapacity);
         planes.add(plane);
         airportView.addPlane(plane, location);
     }
 
     private void movePlaneToBase(String planeName) {
         Plane plane = findPlane(planeName);
-        JLabel planeLabel = plane.getPictureLabel();
-        airportView.animateMove(planeLabel);
+        JComponent planeComponent = plane.get();
+        airportView.animateMove(planeComponent);
         Pause.pause(TIME_TO_WAIT_IN_BASE);
     }
 
     private void removePlane(String name) {
         Plane plane = findPlane(name);
-        airportView.removeLabel(plane.getPictureLabel());
+        airportView.removeLabel(plane.get());
     }
 
     private Plane findPlane(String name) {
@@ -62,17 +62,19 @@ public class AirportController {
 
     private class Flight extends Thread {
 
-        private final String planeName;
-        private final Point sourceLocation;
+        private String planeName;
+        private Point sourceLocation;
+        private int fuelTankCapacity;
 
-        private Flight(String planeName, Point sourceLocation) {
+        private Flight(String planeName, Point sourceLocation, int fuelTankCapacity) {
             this.planeName = planeName;
             this.sourceLocation = sourceLocation;
+            this.fuelTankCapacity = fuelTankCapacity;
         }
 
         @Override
         public void run() {
-            addPlane(planeName, sourceLocation);
+            addPlane(planeName, sourceLocation, fuelTankCapacity);
             movePlaneToBase(planeName);
             removePlane(planeName);
         }

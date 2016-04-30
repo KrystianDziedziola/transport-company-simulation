@@ -8,13 +8,15 @@ import java.util.Random;
 public class FlightsGenerator extends Thread {
 
     private static final int FIRST_PLANE_NUMBER = 1;
-    private static final int TIME_BETWEEN_FLIGHTS = 1000;
+    private static final int TIME_BETWEEN_FLIGHTS = 3000;
+    private static final double TANK_DIFFERENCE_PERCENTAGE = 0.25;
 
     private int numberOfPlanes;
+    private int averageFuelTankCapacity;
 
-
-    public FlightsGenerator(int numberOfPlanes) {
+    public FlightsGenerator(int numberOfPlanes, int averageFuelTankCapacity) {
         this.numberOfPlanes = numberOfPlanes;
+        this.averageFuelTankCapacity = averageFuelTankCapacity;
     }
 
     @Override
@@ -28,9 +30,17 @@ public class FlightsGenerator extends Thread {
         for(int planeNumber = FIRST_PLANE_NUMBER; planeNumber <= numberOfPlanes; planeNumber++) {
             String name = String.format("Plane-%d", planeNumber);
             Point sourceLocation = generateSourceLocation();
-            airportController.addFlight(name, sourceLocation);
+            int fuelTankCapacity = generateFuelTankCapacity();
+            airportController.addFlight(name, sourceLocation, fuelTankCapacity);
             Pause.pause(TIME_BETWEEN_FLIGHTS);
         }
+    }
+
+    private int generateFuelTankCapacity() {
+        Random random = new Random();
+        int difference = averageFuelTankCapacity / 2;
+        int rangeFrom = (int) (averageFuelTankCapacity - averageFuelTankCapacity * TANK_DIFFERENCE_PERCENTAGE);
+        return random.nextInt(difference) + rangeFrom;
     }
 
     private Point generateSourceLocation() {
