@@ -6,7 +6,8 @@ import javax.swing.*;
 
 public class Plane {
 
-    private static final int PICTURE_WIDTH = 100, PICTURE_HEIGHT = 100;
+    private static final int PLANE_WIDTH = 100, PLANE_HEIGHT = 100;
+    private static final int EXPLOSION_WIDTH = 150, EXPLOSION_HEIGHT = 100;
     private static final int PANEL_WIDTH = 150, PANEL_HEIGHT = 150;
 
     private String name;
@@ -35,7 +36,7 @@ public class Plane {
 
     private void setupLabels() {
         String pictureName = "plane.png";
-        pictureLabel = new ImageLabelHelper().getLabelWithImage(pictureName, PICTURE_WIDTH, PICTURE_HEIGHT);
+        pictureLabel = new ImageLabelHelper().getLabelWithImage(pictureName, PLANE_WIDTH, PLANE_HEIGHT);
     }
 
     private void setupTankBar(int tankCapacity) {
@@ -52,6 +53,19 @@ public class Plane {
         panel.add(nameLabel);
         panel.add(pictureLabel);
         panel.add(fuelTankBar);
+    }
+
+    public void burnFuel(int fuel) {
+        fuelTankBar.setValue(fuelTankBar.getValue() - fuel);
+    }
+
+    public boolean isTankEmpty() {
+        return fuelTankBar.getValue() <= 0;
+    }
+
+    public void explode() {
+        pictureLabel.setIcon( new ImageLabelHelper().getIcon("explode.png", EXPLOSION_WIDTH, EXPLOSION_HEIGHT));
+        nameLabel.setText(nameLabel.getText() + " (exploded)");
     }
 
 }

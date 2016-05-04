@@ -5,21 +5,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 public class ImageLabelHelper {
 
     public JLabel getLabelWithImage(String fileName, int labelWidth, int labelHeight) {
+        JLabel pictureLabel = new JLabel();
+        pictureLabel.setIcon(getIcon(fileName, labelWidth, labelHeight));
+        pictureLabel.setSize(labelWidth, labelHeight);
+        return pictureLabel;
+    }
+
+    public Icon getIcon(String fileName, int width, int height) {
         try {
-            JLabel pictureLabel;
             ClassLoader classLoader = getClass().getClassLoader();
             File pictureFile = new File(classLoader.getResource(fileName).getFile());
             BufferedImage image = ImageIO.read(pictureFile);
-            Image scaledImage = image.getScaledInstance(labelWidth, labelHeight, Image.SCALE_SMOOTH);
-            pictureLabel = new JLabel(new ImageIcon(scaledImage));
-            pictureLabel.setSize(labelWidth, labelHeight);
-            return pictureLabel;
-        } catch (IOException e) {
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaledImage);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

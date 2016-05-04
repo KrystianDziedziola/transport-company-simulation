@@ -8,7 +8,7 @@ import java.util.Random;
 public class FlightsGenerator extends Thread {
 
     private static final int FIRST_PLANE_NUMBER = 1;
-    private static final int TIME_BETWEEN_FLIGHTS = 3000;
+    private static final int TIME_BETWEEN_FLIGHTS = 2500;
     private static final double TANK_DIFFERENCE_PERCENTAGE = 0.25;
 
     private int numberOfPlanes;

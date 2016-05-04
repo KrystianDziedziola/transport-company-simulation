@@ -13,16 +13,17 @@ class AirportController {
 
     static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
     private static final int BASE_X = 640, BASE_Y = 0;
-    private static final int TIME_TO_WAIT_IN_BASE = 500;
+    private static final int TIME_TO_WAIT_WHEN_FLIGHT_ENDS = 1000;
+    private static final int FUEL_TO_BURN_EACH_STEP = 2;
+
+    private Point baseLocation = new Point(BASE_X, BASE_Y);
 
     private List<Plane> planes = new ArrayList<>();
-
     private AirportView airportView;
 
     AirportController() {
         Dimension windowSize = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
-        Point baseLocation = new Point(BASE_X, BASE_Y);
-        airportView = new AirportView(windowSize, baseLocation);
+        airportView = new AirportView(windowSize);
     }
 
     void showAirport() {
@@ -41,9 +42,8 @@ class AirportController {
 
     private void movePlaneToBase(String planeName) {
         Plane plane = findPlane(planeName);
-        JComponent planeComponent = plane.get();
-        airportView.animateMove(planeComponent);
-        Pause.pause(TIME_TO_WAIT_IN_BASE);
+        animateMove(plane);
+        Pause.pause(TIME_TO_WAIT_WHEN_FLIGHT_ENDS);
     }
 
     private void removePlane(String name) {
@@ -58,6 +58,39 @@ class AirportController {
             }
         }
         throw new IllegalArgumentException(String.format("Plane '%s' not found.", name));
+    }
+
+    private void animateMove(Plane plane) {
+        JComponent planeLabel = plane.get();
+        Point currentLocation = planeLabel.getLocation();
+        Steps steps = new Steps(currentLocation, baseLocation);
+        move(plane, currentLocation, steps);
+    }
+
+    private void move(Plane plane, Point currentLocation, Steps steps) {
+        while (!isTargetReached(currentLocation, baseLocation)) {
+            Pause.pause(Steps.TIME_BETWEEN_STEPS);
+            changeLocation(currentLocation, steps.getX(), steps.getY());
+            airportView.movePlane(plane.get(), currentLocation);
+            plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+            if(plane.isTankEmpty()) {
+                plane.explode();
+                break;
+            }
+        }
+    }
+
+    private void changeLocation(Point currentLocation, int stepX, int stepY) {
+        if (currentLocation.getX() < baseLocation.getX()) {
+            currentLocation.setLocation(currentLocation.getX() + stepX, currentLocation.getY());
+        }
+        if (currentLocation.getY() > baseLocation.getY()) {
+            currentLocation.setLocation(currentLocation.getX(), currentLocation.getY() - stepY);
+        }
+    }
+
+    private boolean isTargetReached(Point current, Point target) {
+        return (current.getX() >= target.getX()) && (current.getY() <= target.getY());
     }
 
     private class Flight extends Thread {
@@ -78,6 +111,30 @@ class AirportController {
             movePlaneToBase(planeName);
             removePlane(planeName);
         }
+    }
+
+    private class Steps {
+
+        private Point target, current;
+        private static final int TIME_BETWEEN_STEPS = 50;
+
+        Steps(Point current, Point target) {
+            this.current = current;
+            this.target = target;
+        }
+
+        //FIXME: fix this two functions to get flight in straight line
+        int getX() {
+//            return (int) ((target.getX() - current.getX()) / NUMBER_OF_STEPS);
+//            return (int) ((target.getX() - current.getX()) / (current.getY() - target.getY()) * 5);
+            return 5;
+        }
+
+        int getY() {
+//            return (int) ((current.getY() - target.getY()) / NUMBER_OF_STEPS);
+            return 5;
+        }
+
     }
 
 }
