@@ -1,6 +1,8 @@
 package edu.kystek.controller;
 
 import edu.kystek.controller.helper.Pause;
+import edu.kystek.controller.helper.Steps;
+import edu.kystek.model.MyPackage;
 import edu.kystek.model.Plane;
 import edu.kystek.view.AirportView;
 
@@ -19,6 +21,7 @@ class AirportController {
     private Point baseLocation = new Point(BASE_X, BASE_Y);
 
     private List<Plane> planes = new ArrayList<>();
+    private List<MyPackage> packages = new ArrayList<>();
     private AirportView airportView;
 
     AirportController() {
@@ -30,8 +33,8 @@ class AirportController {
         airportView.showWindow();
     }
 
-    void addFlight(String planeName, Point sourceLocation, int fuelTankCapacity) {
-        new Flight(planeName, sourceLocation, fuelTankCapacity).start();
+    void addFlight(String planeName, Point sourceLocation, String packageName, int fuelTankCapacity) {
+        new Flight(planeName, sourceLocation, packageName, fuelTankCapacity).start();
     }
 
     private void addPlane(String name, Point location, int fuelTankCapacity) {
@@ -97,44 +100,46 @@ class AirportController {
 
         private String planeName;
         private Point sourceLocation;
+        private String packageName;
         private int fuelTankCapacity;
 
-        private Flight(String planeName, Point sourceLocation, int fuelTankCapacity) {
+        private Flight(String planeName, Point sourceLocation, String packageName, int fuelTankCapacity) {
             this.planeName = planeName;
             this.sourceLocation = sourceLocation;
+            this.packageName = packageName;
             this.fuelTankCapacity = fuelTankCapacity;
         }
 
         @Override
         public void run() {
+            addPackage(packageName, sourceLocation);
+            Pause.pause(1000);
             addPlane(planeName, sourceLocation, fuelTankCapacity);
+            Pause.pause(500);
+            removePackage(packageName);
             movePlaneToBase(planeName);
             removePlane(planeName);
         }
     }
 
-    private class Steps {
+    private void removePackage(String name) {
+        MyPackage myPackage = findPackage(name);
+        myPackage.getLabel().setVisible(false);
+    }
 
-        private Point target, current;
-        private static final int TIME_BETWEEN_STEPS = 50;
+    private void addPackage(String packageName, Point sourceLocation) {
+        MyPackage myPackage = new MyPackage(packageName);
+        packages.add(myPackage);
+        airportView.addPackage(myPackage, sourceLocation);
+    }
 
-        Steps(Point current, Point target) {
-            this.current = current;
-            this.target = target;
+    private MyPackage findPackage(String name) {
+        for(MyPackage myPackage : packages) {
+            if(myPackage.getName().equals(name)) {
+                return myPackage;
+            }
         }
-
-        //FIXME: fix this two functions to get flight in straight line
-        int getX() {
-//            return (int) ((target.getX() - current.getX()) / NUMBER_OF_STEPS);
-//            return (int) ((target.getX() - current.getX()) / (current.getY() - target.getY()) * 5);
-            return 5;
-        }
-
-        int getY() {
-//            return (int) ((current.getY() - target.getY()) / NUMBER_OF_STEPS);
-            return 5;
-        }
-
+        throw new IllegalArgumentException(String.format("Plane '%s' not found.", name));
     }
 
 }

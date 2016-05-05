@@ -29,9 +29,10 @@ public class FlightsGenerator extends Thread {
     private void generateFlights(AirportController airportController) {
         for(int planeNumber = FIRST_PLANE_NUMBER; planeNumber <= numberOfPlanes; planeNumber++) {
             String name = String.format("Plane-%d", planeNumber);
+            String packageName = String.format("MyPackage-%d", planeNumber);
             Point sourceLocation = generateSourceLocation();
             int fuelTankCapacity = generateFuelTankCapacity();
-            airportController.addFlight(name, sourceLocation, fuelTankCapacity);
+            airportController.addFlight(name, sourceLocation, packageName, fuelTankCapacity);
             Pause.pause(TIME_BETWEEN_FLIGHTS);
         }
     }
