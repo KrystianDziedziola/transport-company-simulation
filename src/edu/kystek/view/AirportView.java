@@ -1,6 +1,6 @@
 package edu.kystek.view;
 
-import edu.kystek.model.MyPackage;
+import edu.kystek.model.AirportPackage;
 import edu.kystek.model.Plane;
 
 import javax.swing.*;
@@ -26,8 +26,8 @@ public class AirportView extends JFrame {
         refresh();
     }
 
-    public void movePlane(JComponent planeLabel, Point point) {
-        planeLabel.setLocation(point);
+     public void movePlane(Plane plane, Point point) {
+        plane.get().setLocation(point);
         refresh();
     }
 
@@ -36,8 +36,8 @@ public class AirportView extends JFrame {
         refresh();
     }
 
-    public void addPackage(MyPackage myPackage, Point location) {
-        JLabel packageLabel = myPackage.getLabel();
+    public void addPackage(AirportPackage airportPackage, Point location) {
+        JLabel packageLabel = airportPackage.getLabel();
         int pointsToCenterOfPlane = 50;
         packageLabel.setLocation((int) location.getX() + pointsToCenterOfPlane,
                 (int) location.getY() + pointsToCenterOfPlane);

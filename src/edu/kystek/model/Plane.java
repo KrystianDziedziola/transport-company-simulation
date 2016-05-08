@@ -34,8 +34,13 @@ public class Plane {
         return panel;
     }
 
+    public void flip() {
+        String pictureName = "planeToBase.png";
+        pictureLabel.setIcon(new ImageLabelHelper().getIcon(pictureName, PLANE_WIDTH, PLANE_HEIGHT));
+    }
+
     private void setupLabels() {
-        String pictureName = "plane.png";
+        String pictureName = "planeFromBase.png";
         pictureLabel = new ImageLabelHelper().getLabelWithImage(pictureName, PLANE_WIDTH, PLANE_HEIGHT);
     }
 

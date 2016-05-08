@@ -1,8 +1,9 @@
 package edu.kystek.controller;
 
+import edu.kystek.controller.helper.FlightDirection;
 import edu.kystek.controller.helper.Pause;
 import edu.kystek.controller.helper.Steps;
-import edu.kystek.model.MyPackage;
+import edu.kystek.model.AirportPackage;
 import edu.kystek.model.Plane;
 import edu.kystek.view.AirportView;
 
@@ -11,17 +12,19 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.kystek.controller.helper.FlightDirection.*;
+
 class AirportController {
 
     static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
     private static final int BASE_X = 640, BASE_Y = 0;
     private static final int TIME_TO_WAIT_WHEN_FLIGHT_ENDS = 1000;
-    private static final int FUEL_TO_BURN_EACH_STEP = 2;
+    private static final int FUEL_TO_BURN_EACH_STEP = 1;
 
     private Point baseLocation = new Point(BASE_X, BASE_Y);
 
     private List<Plane> planes = new ArrayList<>();
-    private List<MyPackage> packages = new ArrayList<>();
+    private List<AirportPackage> packages = new ArrayList<>();
     private AirportView airportView;
 
     AirportController() {
@@ -33,48 +36,37 @@ class AirportController {
         airportView.showWindow();
     }
 
-    void addFlight(String planeName, Point sourceLocation, String packageName, int fuelTankCapacity) {
-        new Flight(planeName, sourceLocation, packageName, fuelTankCapacity).start();
+    void addFlight(Plane plane, String packageName, Point packageLocation) {
+        new Flight(plane, packageName, packageLocation).start();
     }
 
-    private void addPlane(String name, Point location, int fuelTankCapacity) {
-        Plane plane = new Plane(name, fuelTankCapacity);
+    private void addPlane(Plane plane, Point location) {
         planes.add(plane);
         airportView.addPlane(plane, location);
     }
 
-    private void movePlaneToBase(String planeName) {
-        Plane plane = findPlane(planeName);
-        animateMove(plane);
+    private void movePlane(Plane plane, Point targetLocation, FlightDirection flightDirection) {
+        animateMove(plane, targetLocation, flightDirection);
         Pause.pause(TIME_TO_WAIT_WHEN_FLIGHT_ENDS);
     }
 
-    private void removePlane(String name) {
-        Plane plane = findPlane(name);
+    private void removePlane(Plane plane) {
         airportView.removeLabel(plane.get());
     }
 
-    private Plane findPlane(String name) {
-        for(Plane plane : planes) {
-            if(plane.getName().equals(name)) {
-                return plane;
-            }
-        }
-        throw new IllegalArgumentException(String.format("Plane '%s' not found.", name));
-    }
-
-    private void animateMove(Plane plane) {
+    private void animateMove(Plane plane, Point targetLocation, FlightDirection flightDirection) {
         JComponent planeLabel = plane.get();
         Point currentLocation = planeLabel.getLocation();
-        Steps steps = new Steps(currentLocation, baseLocation);
-        move(plane, currentLocation, steps);
+        Steps steps = new Steps(currentLocation, targetLocation);
+        move(plane, currentLocation, targetLocation, steps, flightDirection);
     }
 
-    private void move(Plane plane, Point currentLocation, Steps steps) {
-        while (!isTargetReached(currentLocation, baseLocation)) {
+    private void move(Plane plane, Point currentLocation, Point targetLocation,
+                      Steps steps, FlightDirection flightDirection) {
+        while (!isTargetReached(currentLocation, targetLocation, flightDirection)) {
+            changeLocation(currentLocation, targetLocation, steps, flightDirection);
             Pause.pause(Steps.TIME_BETWEEN_STEPS);
-            changeLocation(currentLocation, steps.getX(), steps.getY());
-            airportView.movePlane(plane.get(), currentLocation);
+            airportView.movePlane(plane, currentLocation);
             plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
             if(plane.isTankEmpty()) {
                 plane.explode();
@@ -83,60 +75,96 @@ class AirportController {
         }
     }
 
-    private void changeLocation(Point currentLocation, int stepX, int stepY) {
-        if (currentLocation.getX() < baseLocation.getX()) {
-            currentLocation.setLocation(currentLocation.getX() + stepX, currentLocation.getY());
+    private void changeLocation(Point currentLocation, Point targetLocation,
+                                Steps steps, FlightDirection flightDirection) {
+        switch (flightDirection) {
+            case TO_BASE:
+                changeToBaseLocation(currentLocation, targetLocation, steps);
+                break;
+            case FROM_BASE:
+                changeFromBaseLocation(currentLocation, targetLocation, steps);
+                break;
+            default:
+                throw new IllegalArgumentException("Wrong flight direction.");
         }
-        if (currentLocation.getY() > baseLocation.getY()) {
-            currentLocation.setLocation(currentLocation.getX(), currentLocation.getY() - stepY);
+
+    }
+
+    private void changeToBaseLocation(Point currentLocation, Point targetLocation, Steps steps) {
+        if (currentLocation.getX() < targetLocation.getX()) {
+            currentLocation.setLocation(currentLocation.getX() + steps.getX(), currentLocation.getY());
+        }
+        if (currentLocation.getY() > targetLocation.getY()) {
+            currentLocation.setLocation(currentLocation.getX(), currentLocation.getY() - steps.getY());
         }
     }
 
-    private boolean isTargetReached(Point current, Point target) {
-        return (current.getX() >= target.getX()) && (current.getY() <= target.getY());
+    private void changeFromBaseLocation(Point currentLocation, Point targetLocation, Steps steps) {
+        if (currentLocation.getX() > targetLocation.getX()) {
+            currentLocation.setLocation(currentLocation.getX() - steps.getX(), currentLocation.getY());
+        }
+        if (currentLocation.getY() < targetLocation.getY()) {
+            currentLocation.setLocation(currentLocation.getX(), currentLocation.getY() + steps.getY());
+        }
+    }
+
+    private boolean isTargetReached(Point current, Point target, FlightDirection flightDirection) {
+        boolean isReached;
+        switch (flightDirection) {
+            case TO_BASE:
+                isReached = (current.getX() >= target.getX()) && (current.getY() <= target.getY());
+                break;
+            case FROM_BASE:
+                isReached = (current.getX() <= target.getX()) && (current.getY() >= target.getY());
+                break;
+            default:
+                throw new IllegalArgumentException("Wrong flight direction.");
+        }
+        return isReached;
     }
 
     private class Flight extends Thread {
 
-        private String planeName;
-        private Point sourceLocation;
+        private Plane plane;
+        private Point packageLocation;
         private String packageName;
-        private int fuelTankCapacity;
 
-        private Flight(String planeName, Point sourceLocation, String packageName, int fuelTankCapacity) {
-            this.planeName = planeName;
-            this.sourceLocation = sourceLocation;
+        private Flight(Plane plane, String packageName, Point packageLocation) {
+            this.plane = plane;
+            this.packageLocation = packageLocation;
             this.packageName = packageName;
-            this.fuelTankCapacity = fuelTankCapacity;
         }
 
         @Override
         public void run() {
-            addPackage(packageName, sourceLocation);
+            addPackage(packageName, packageLocation);
             Pause.pause(1000);
-            addPlane(planeName, sourceLocation, fuelTankCapacity);
+            addPlane(plane, baseLocation);
             Pause.pause(500);
+            movePlane(plane, packageLocation, FROM_BASE);
+            plane.flip();
             removePackage(packageName);
-            movePlaneToBase(planeName);
-            removePlane(planeName);
+            Pause.pause(500);
+            movePlane(plane, baseLocation, TO_BASE);
+            removePlane(plane);
         }
     }
 
     private void removePackage(String name) {
-        MyPackage myPackage = findPackage(name);
-        myPackage.getLabel().setVisible(false);
+        AirportPackage airportPackage = findPackage(name);
+        airportPackage.getLabel().setVisible(false);
     }
 
     private void addPackage(String packageName, Point sourceLocation) {
-        MyPackage myPackage = new MyPackage(packageName);
-        packages.add(myPackage);
-        airportView.addPackage(myPackage, sourceLocation);
+        AirportPackage airportPackage = new AirportPackage(packageName);
+        packages.add(airportPackage);
+        airportView.addPackage(airportPackage, sourceLocation);
     }
 
-    private MyPackage findPackage(String name) {
-        for(MyPackage myPackage : packages) {
-            if(myPackage.getName().equals(name)) {
-                return myPackage;
+    private AirportPackage findPackage(String name) {
+        for(AirportPackage airportPackage : packages) {
+            if(airportPackage.getName().equals(name)) {
+                return airportPackage;
             }
         }
         throw new IllegalArgumentException(String.format("Plane '%s' not found.", name));

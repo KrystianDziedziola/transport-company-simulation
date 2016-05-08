@@ -4,7 +4,7 @@ import edu.kystek.controller.helper.ImageLabelHelper;
 
 import javax.swing.*;
 
-public class MyPackage {
+public class AirportPackage {
 
     private static final int WIDTH = 50, HEIGHT = 50;
 
@@ -12,7 +12,7 @@ public class MyPackage {
 
     private JLabel packageLabel;
 
-    public MyPackage(String name) {
+    public AirportPackage(String name) {
         this.name = name;
         packageLabel = new ImageLabelHelper().getLabelWithImage("package.png", WIDTH, HEIGHT);
     }
