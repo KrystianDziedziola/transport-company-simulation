@@ -2,7 +2,6 @@
 package edu.kystek.controller;
 
 import edu.kystek.controller.helper.Pause;
-import edu.kystek.model.AirportPackage;
 import edu.kystek.model.Plane;
 
 import java.awt.*;
@@ -11,7 +10,7 @@ import java.util.Random;
 public class FlightsGenerator extends Thread {
 
     private static final int FIRST_PLANE_NUMBER = 1;
-    private static final int TIME_BETWEEN_FLIGHTS = 3500;
+    private static final int TIME_BETWEEN_FLIGHTS = 5000;
     private static final double TANK_DIFFERENCE_PERCENTAGE = 0.25;
 
     private int numberOfPlanes;

@@ -1,5 +1,6 @@
 package edu.kystek.model;
 
+import edu.kystek.controller.helper.EmptyTankException;
 import edu.kystek.controller.helper.ImageLabelHelper;
 
 import javax.swing.*;
@@ -60,17 +61,22 @@ public class Plane {
         panel.add(fuelTankBar);
     }
 
-    public void burnFuel(int fuel) {
+    public void burnFuel(int fuel) throws EmptyTankException {
+        if(isTankEmpty()) {
+            throw new EmptyTankException();
+        }
         fuelTankBar.setValue(fuelTankBar.getValue() - fuel);
-    }
-
-    public boolean isTankEmpty() {
-        return fuelTankBar.getValue() <= 0;
     }
 
     public void explode() {
         pictureLabel.setIcon( new ImageLabelHelper().getIcon("explode.png", EXPLOSION_WIDTH, EXPLOSION_HEIGHT));
         nameLabel.setText(nameLabel.getText() + " (exploded)");
     }
+
+    private boolean isTankEmpty() {
+        return fuelTankBar.getValue() <= 0;
+    }
+
+
 
 }

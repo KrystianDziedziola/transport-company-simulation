@@ -1,5 +1,6 @@
 package edu.kystek.controller;
 
+import edu.kystek.controller.helper.EmptyTankException;
 import edu.kystek.controller.helper.FlightDirection;
 import edu.kystek.controller.helper.Pause;
 import edu.kystek.controller.helper.Steps;
@@ -27,6 +28,8 @@ class AirportController {
     private List<AirportPackage> packages = new ArrayList<>();
     private AirportView airportView;
 
+    private boolean isBaseEmpty = true;
+
     AirportController() {
         Dimension windowSize = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
         airportView = new AirportView(windowSize);
@@ -40,7 +43,7 @@ class AirportController {
         new Flight(plane, packageName, packageLocation).start();
     }
 
-    private void addPlane(Plane plane, Point location) {
+    private void addPlane(Plane plane, Point location) throws InterruptedException {
         planes.add(plane);
         airportView.addPlane(plane, location);
     }
@@ -67,11 +70,13 @@ class AirportController {
             changeLocation(currentLocation, targetLocation, steps, flightDirection);
             Pause.pause(Steps.TIME_BETWEEN_STEPS);
             airportView.movePlane(plane, currentLocation);
-            plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
-            if(plane.isTankEmpty()) {
+            try {
+                plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+            } catch (EmptyTankException e) {
                 plane.explode();
                 break;
             }
+
         }
     }
 
@@ -137,16 +142,20 @@ class AirportController {
 
         @Override
         public void run() {
-            addPackage(packageName, packageLocation);
-            Pause.pause(1000);
-            addPlane(plane, baseLocation);
-            Pause.pause(500);
-            movePlane(plane, packageLocation, FROM_BASE);
-            plane.flip();
-            removePackage(packageName);
-            Pause.pause(500);
-            movePlane(plane, baseLocation, TO_BASE);
-            removePlane(plane);
+            try {
+                addPackage(packageName, packageLocation);
+                Pause.pause(1000);
+                addPlane(plane, baseLocation);
+                Pause.pause(500);
+                movePlane(plane, packageLocation, FROM_BASE);
+                plane.flip();
+                removePackage(packageName);
+                Pause.pause(500);
+                movePlane(plane, baseLocation, TO_BASE);
+                removePlane(plane);
+            } catch (InterruptedException e) {
+                    e.printStackTrace();
+            }
         }
     }
 
