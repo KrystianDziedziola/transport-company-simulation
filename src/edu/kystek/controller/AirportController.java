@@ -19,8 +19,9 @@ class AirportController {
 
     static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
     private static final int BASE_X = 640, BASE_Y = 0;
-    private static final int TIME_TO_WAIT_WHEN_FLIGHT_ENDS = 1000;
+    private static final int TIME_TO_WAIT_WHEN_FLIGHT_ENDS = 2000;
     private static final int FUEL_TO_BURN_EACH_STEP = 1;
+    private static final int BASE_ZONE_X = 500, BASE_ZONE_Y = 100;
 
     private Point baseLocation = new Point(BASE_X, BASE_Y);
 
@@ -48,13 +49,9 @@ class AirportController {
         airportView.addPlane(plane, location);
     }
 
-    private void movePlane(Plane plane, Point targetLocation, FlightDirection flightDirection) {
-        animateMove(plane, targetLocation, flightDirection);
-        Pause.pause(TIME_TO_WAIT_WHEN_FLIGHT_ENDS);
-    }
-
     private void removePlane(Plane plane) {
         airportView.removeLabel(plane.get());
+        isBaseEmpty = true;
     }
 
     private void animateMove(Plane plane, Point targetLocation, FlightDirection flightDirection) {
@@ -62,22 +59,43 @@ class AirportController {
         Point currentLocation = planeLabel.getLocation();
         Steps steps = new Steps(currentLocation, targetLocation);
         move(plane, currentLocation, targetLocation, steps, flightDirection);
+        Pause.pause(TIME_TO_WAIT_WHEN_FLIGHT_ENDS);
     }
 
     private void move(Plane plane, Point currentLocation, Point targetLocation,
                       Steps steps, FlightDirection flightDirection) {
         while (!isTargetReached(currentLocation, targetLocation, flightDirection)) {
-            changeLocation(currentLocation, targetLocation, steps, flightDirection);
-            Pause.pause(Steps.TIME_BETWEEN_STEPS);
-            airportView.movePlane(plane, currentLocation);
             try {
-                plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+                moveOneStep(plane, currentLocation, targetLocation, steps, flightDirection);
+                if (isInBaseZone(currentLocation) && flightDirection == FlightDirection.TO_BASE) {
+                    while (!isBaseEmpty) {
+                        plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+                        Pause.pause(Steps.TIME_BETWEEN_STEPS);
+                    }
+                    isBaseEmpty = false;
+                    while (!isTargetReached(currentLocation, targetLocation, flightDirection)) {
+                        moveOneStep(plane, currentLocation, targetLocation, steps, flightDirection);
+                    }
+                    break;
+                }
             } catch (EmptyTankException e) {
                 plane.explode();
-                break;
+                isBaseEmpty = true;
+                return;
             }
-
         }
+    }
+
+    private void moveOneStep(Plane plane, Point currentLocation, Point targetLocation,
+                             Steps steps, FlightDirection flightDirection) throws EmptyTankException {
+        changeLocation(currentLocation, targetLocation, steps, flightDirection);
+        airportView.movePlane(plane, currentLocation);
+        plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+        Pause.pause(Steps.TIME_BETWEEN_STEPS);
+    }
+
+    private boolean isInBaseZone(Point currentLocation) {
+        return currentLocation.getX() > BASE_ZONE_X && currentLocation.getY() < BASE_ZONE_Y;
     }
 
     private void changeLocation(Point currentLocation, Point targetLocation,
@@ -147,11 +165,11 @@ class AirportController {
                 Pause.pause(1000);
                 addPlane(plane, baseLocation);
                 Pause.pause(500);
-                movePlane(plane, packageLocation, FROM_BASE);
+                animateMove(plane, packageLocation, FROM_BASE);
                 plane.flip();
                 removePackage(packageName);
                 Pause.pause(500);
-                movePlane(plane, baseLocation, TO_BASE);
+                animateMove(plane, baseLocation, TO_BASE);
                 removePlane(plane);
             } catch (InterruptedException e) {
                     e.printStackTrace();
