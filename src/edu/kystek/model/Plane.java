@@ -1,15 +1,12 @@
 package edu.kystek.model;
 
+import edu.kystek.controller.helper.AirportConstants;
 import edu.kystek.controller.helper.EmptyTankException;
-import edu.kystek.controller.helper.ImageLabelHelper;
+import edu.kystek.controller.helper.ImageHelper;
 
 import javax.swing.*;
 
 public class Plane {
-
-    private static final int PLANE_WIDTH = 100, PLANE_HEIGHT = 100;
-    private static final int EXPLOSION_WIDTH = 150, EXPLOSION_HEIGHT = 100;
-    private static final int PANEL_WIDTH = 150, PANEL_HEIGHT = 150;
 
     private String name;
 
@@ -37,12 +34,14 @@ public class Plane {
 
     public void flip() {
         String pictureName = "planeToBase.png";
-        pictureLabel.setIcon(new ImageLabelHelper().getIcon(pictureName, PLANE_WIDTH, PLANE_HEIGHT));
+        pictureLabel.setIcon(new ImageHelper().getIcon(pictureName,
+                AirportConstants.PLANE_WIDTH, AirportConstants.PLANE_HEIGHT));
     }
 
     private void setupLabels() {
         String pictureName = "planeFromBase.png";
-        pictureLabel = new ImageLabelHelper().getLabelWithImage(pictureName, PLANE_WIDTH, PLANE_HEIGHT);
+        pictureLabel = new ImageHelper().getLabelWithImage(pictureName,
+                AirportConstants.PLANE_WIDTH, AirportConstants.PLANE_HEIGHT);
     }
 
     private void setupTankBar(int tankCapacity) {
@@ -51,7 +50,7 @@ public class Plane {
     }
 
     private void setupPanel() {
-        panel.setSize(PANEL_WIDTH, PANEL_HEIGHT);
+        panel.setSize(AirportConstants.PANEL_WIDTH, AirportConstants.PANEL_HEIGHT);
         panel.setOpaque(false);
     }
 
@@ -69,7 +68,8 @@ public class Plane {
     }
 
     public void explode() {
-        pictureLabel.setIcon( new ImageLabelHelper().getIcon("explode.png", EXPLOSION_WIDTH, EXPLOSION_HEIGHT));
+        pictureLabel.setIcon( new ImageHelper().getIcon("explode.png",
+                AirportConstants.EXPLOSION_WIDTH, AirportConstants.EXPLOSION_HEIGHT));
         nameLabel.setText(nameLabel.getText() + " (exploded)");
     }
 

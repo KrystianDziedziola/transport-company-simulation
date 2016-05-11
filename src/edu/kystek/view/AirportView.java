@@ -1,5 +1,6 @@
 package edu.kystek.view;
 
+import edu.kystek.controller.helper.ImageHelper;
 import edu.kystek.model.AirportPackage;
 import edu.kystek.model.Plane;
 
@@ -51,6 +52,7 @@ public class AirportView extends JFrame {
         setSize(windowSize);
         setResizable(false);
         setLocationRelativeTo(null);
+        setContentPane(new JLabel(new ImageHelper().getIcon("background.jpg", 800, 600)));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 

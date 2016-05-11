@@ -1,9 +1,6 @@
 package edu.kystek.controller;
 
-import edu.kystek.controller.helper.EmptyTankException;
-import edu.kystek.controller.helper.FlightDirection;
-import edu.kystek.controller.helper.Pause;
-import edu.kystek.controller.helper.Steps;
+import edu.kystek.controller.helper.*;
 import edu.kystek.model.AirportPackage;
 import edu.kystek.model.Plane;
 import edu.kystek.view.AirportView;
@@ -17,13 +14,7 @@ import static edu.kystek.controller.helper.FlightDirection.*;
 
 class AirportController {
 
-    static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
-    private static final int BASE_X = 640, BASE_Y = 0;
-    private static final int TIME_TO_WAIT_WHEN_FLIGHT_ENDS = 2000;
-    private static final int FUEL_TO_BURN_EACH_STEP = 1;
-    private static final int BASE_ZONE_X = 500, BASE_ZONE_Y = 100;
-
-    private Point baseLocation = new Point(BASE_X, BASE_Y);
+    private Point baseLocation = new Point(AirportConstants.BASE_X, AirportConstants.BASE_Y);
 
     private List<Plane> planes = new ArrayList<>();
     private List<AirportPackage> packages = new ArrayList<>();
@@ -32,7 +23,7 @@ class AirportController {
     private boolean isBaseEmpty = true;
 
     AirportController() {
-        Dimension windowSize = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
+        Dimension windowSize = new Dimension(AirportConstants.WINDOW_WIDTH, AirportConstants.WINDOW_HEIGHT);
         airportView = new AirportView(windowSize);
     }
 
@@ -59,7 +50,7 @@ class AirportController {
         Point currentLocation = planeLabel.getLocation();
         Steps steps = new Steps(currentLocation, targetLocation);
         move(plane, currentLocation, targetLocation, steps, flightDirection);
-        Pause.pause(TIME_TO_WAIT_WHEN_FLIGHT_ENDS);
+        Pause.pause(AirportConstants.TIME_TO_WAIT_WHEN_FLIGHT_ENDS);
     }
 
     private void move(Plane plane, Point currentLocation, Point targetLocation,
@@ -80,7 +71,7 @@ class AirportController {
 
     private void tryMoveToBase(Plane plane, Point currentLocation, Point targetLocation, Steps steps, FlightDirection flightDirection) throws EmptyTankException {
         while (!isBaseEmpty) {
-            plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+            plane.burnFuel(AirportConstants.FUEL_TO_BURN_EACH_STEP);
             Pause.pause(Steps.TIME_BETWEEN_STEPS);
         }
         isBaseEmpty = false;
@@ -93,12 +84,13 @@ class AirportController {
                              Steps steps, FlightDirection flightDirection) throws EmptyTankException {
         changeLocation(currentLocation, targetLocation, steps, flightDirection);
         airportView.movePlane(plane, currentLocation);
-        plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+        plane.burnFuel(AirportConstants.FUEL_TO_BURN_EACH_STEP);
         Pause.pause(Steps.TIME_BETWEEN_STEPS);
     }
 
     private boolean isInBaseZone(Point currentLocation) {
-        return currentLocation.getX() > BASE_ZONE_X && currentLocation.getY() < BASE_ZONE_Y;
+        return currentLocation.getX() > AirportConstants.BASE_ZONE_X &&
+                currentLocation.getY() < AirportConstants.BASE_ZONE_Y;
     }
 
     private void changeLocation(Point currentLocation, Point targetLocation,
@@ -163,6 +155,7 @@ class AirportController {
 
         @Override
         public void run() {
+            //TODO: add constants
             try {
                 addPackage(packageName, packageLocation);
                 Pause.pause(1000);

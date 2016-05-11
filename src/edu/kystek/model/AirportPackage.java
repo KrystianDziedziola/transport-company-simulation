@@ -1,12 +1,11 @@
 package edu.kystek.model;
 
-import edu.kystek.controller.helper.ImageLabelHelper;
+import edu.kystek.controller.helper.AirportConstants;
+import edu.kystek.controller.helper.ImageHelper;
 
 import javax.swing.*;
 
 public class AirportPackage {
-
-    private static final int WIDTH = 50, HEIGHT = 50;
 
     private String name;
 
@@ -14,7 +13,8 @@ public class AirportPackage {
 
     public AirportPackage(String name) {
         this.name = name;
-        packageLabel = new ImageLabelHelper().getLabelWithImage("package.png", WIDTH, HEIGHT);
+        packageLabel = new ImageHelper().getLabelWithImage("package.png",
+                AirportConstants.PACKAGE_WIDTH, AirportConstants.PACKAGE_HEIGHT);
     }
 
     public JLabel getLabel() {
