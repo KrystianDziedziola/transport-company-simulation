@@ -68,21 +68,24 @@ class AirportController {
             try {
                 moveOneStep(plane, currentLocation, targetLocation, steps, flightDirection);
                 if (isInBaseZone(currentLocation) && flightDirection == FlightDirection.TO_BASE) {
-                    while (!isBaseEmpty) {
-                        plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
-                        Pause.pause(Steps.TIME_BETWEEN_STEPS);
-                    }
-                    isBaseEmpty = false;
-                    while (!isTargetReached(currentLocation, targetLocation, flightDirection)) {
-                        moveOneStep(plane, currentLocation, targetLocation, steps, flightDirection);
-                    }
-                    break;
+                    tryMoveToBase(plane, currentLocation, targetLocation, steps, flightDirection);
                 }
             } catch (EmptyTankException e) {
                 plane.explode();
                 isBaseEmpty = true;
                 return;
             }
+        }
+    }
+
+    private void tryMoveToBase(Plane plane, Point currentLocation, Point targetLocation, Steps steps, FlightDirection flightDirection) throws EmptyTankException {
+        while (!isBaseEmpty) {
+            plane.burnFuel(FUEL_TO_BURN_EACH_STEP);
+            Pause.pause(Steps.TIME_BETWEEN_STEPS);
+        }
+        isBaseEmpty = false;
+        while (!isTargetReached(currentLocation, targetLocation, flightDirection)) {
+            moveOneStep(plane, currentLocation, targetLocation, steps, flightDirection);
         }
     }
 
